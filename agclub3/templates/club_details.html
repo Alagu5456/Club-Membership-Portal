@@ -1,0 +1,232 @@
+{% extends "base.html" %}
+
+{% block title %}{{ club.name }} - Club Details{% endblock %}
+
+{% block content %}
+<!-- Club Header -->
+<div class="hero-section" style="padding: 60px 0;">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <div class="hero-content">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="club-icon me-4" style="width: 100px; height: 100px; font-size: 3rem;">
+                            {% if club.image_url %}
+                                <img src="{{ club.image_url }}" alt="{{ club.name }}" style="width: 80px; height: 80px;">
+                            {% else %}
+                                {% if 'NSS' in club.name or 'Service' in club.name %}
+                                    <i class="fas fa-hands-helping"></i>
+                                {% elif 'Coding' in club.name or 'Tech' in club.name %}
+                                    <i class="fas fa-code"></i>
+                                {% elif 'Literary' in club.name or 'Writing' in club.name %}
+                                    <i class="fas fa-feather-alt"></i>
+                                {% elif 'Photography' in club.name %}
+                                    <i class="fas fa-camera"></i>
+                                {% elif 'Debate' in club.name %}
+                                    <i class="fas fa-comments"></i>
+                                {% elif 'Music' in club.name %}
+                                    <i class="fas fa-music"></i>
+                                {% else %}
+                                    <i class="fas fa-users"></i>
+                                {% endif %}
+                            {% endif %}
+                        </div>
+                        <div>
+                            <h1 class="hero-title" style="font-size: 3rem; margin-bottom: 1rem;">{{ club.name }}</h1>
+                            <p class="hero-subtitle" style="font-size: 1.3rem; margin-bottom: 0;">{{ club.description }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="hero-stats" style="flex-direction: column; gap: 1rem;">
+                    <div class="stat-item">
+                        <span class="stat-number">{{ club.get_approved_member_count() }}</span>
+                        <div class="stat-label">Active Members</div>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">{{ club.get_pending_member_count() }}</span>
+                        <div class="stat-label">Pending Applications</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container py-5">
+    <div class="row">
+        <!-- Main Content -->
+        <div class="col-lg-8">
+            <!-- About Section -->
+            <div class="form-container mb-5">
+                <h3 class="section-title" style="font-size: 2rem; margin-bottom: 2rem;">About {{ club.name }}</h3>
+                {% if club.detailed_description %}
+                <p class="text-light" style="font-size: 1.1rem; line-height: 1.8;">{{ club.detailed_description }}</p>
+                {% else %}
+                <p class="text-light" style="font-size: 1.1rem; line-height: 1.8;">{{ club.description }}</p>
+                {% endif %}
+            </div>
+
+            <!-- Activities Section -->
+            {% if club.activities %}
+            <div class="form-container mb-5">
+                <h3 class="section-title" style="font-size: 2rem; margin-bottom: 2rem;">
+                    <i class="fas fa-calendar-alt me-2"></i>Activities & Events
+                </h3>
+                <div class="row">
+                    {% for activity in club.activities.split(', ') %}
+                    <div class="col-md-6 mb-3">
+                        <div class="d-flex align-items-center">
+                            <div class="club-icon me-3" style="width: 40px; height: 40px; font-size: 1rem; background: var(--gradient-accent);">
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <span class="text-light">{{ activity.strip() }}</span>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Benefits Section -->
+            {% if club.benefits %}
+            <div class="form-container mb-5">
+                <h3 class="section-title" style="font-size: 2rem; margin-bottom: 2rem;">
+                    <i class="fas fa-trophy me-2"></i>Member Benefits
+                </h3>
+                <div class="row">
+                    {% for benefit in club.benefits.split(', ') %}
+                    <div class="col-md-6 mb-3">
+                        <div class="d-flex align-items-center">
+                            <div class="club-icon me-3" style="width: 40px; height: 40px; font-size: 1rem; background: var(--gradient-secondary);">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <span class="text-light">{{ benefit.strip() }}</span>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <!-- Join Card -->
+            <div class="form-container mb-4">
+                <h4 class="text-center mb-4">
+                    <i class="fas fa-user-plus me-2"></i>Join {{ club.name }}
+                </h4>
+                <div class="d-grid gap-3">
+                    <a href="{{ url_for('join_club', club_id=club.id) }}" class="btn btn-primary btn-lg">
+                        <i class="fas fa-rocket me-2"></i>Apply Now
+                    </a>
+                    <a href="{{ url_for('club_list') }}" class="btn btn-outline-primary">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Clubs
+                    </a>
+                </div>
+            </div>
+
+            <!-- Club Info -->
+            <div class="form-container mb-4">
+                <h5 class="mb-3">
+                    <i class="fas fa-info-circle me-2"></i>Club Information
+                </h5>
+                
+                {% if club.meeting_schedule %}
+                <div class="mb-3">
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="fas fa-clock text-primary me-2"></i>
+                        <strong>Meeting Schedule</strong>
+                    </div>
+                    <p class="text-muted ps-4">{{ club.meeting_schedule }}</p>
+                </div>
+                {% endif %}
+
+                {% if club.contact_email %}
+                <div class="mb-3">
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="fas fa-envelope text-primary me-2"></i>
+                        <strong>Contact</strong>
+                    </div>
+                    <p class="text-muted ps-4">
+                        <a href="mailto:{{ club.contact_email }}" class="text-primary">{{ club.contact_email }}</a>
+                    </p>
+                </div>
+                {% endif %}
+
+                {% if club.requirements %}
+                <div class="mb-3">
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="fas fa-list-check text-primary me-2"></i>
+                        <strong>Requirements</strong>
+                    </div>
+                    <p class="text-muted ps-4">{{ club.requirements }}</p>
+                </div>
+                {% endif %}
+
+                <div class="mb-3">
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="fas fa-calendar text-primary me-2"></i>
+                        <strong>Established</strong>
+                    </div>
+                    <p class="text-muted ps-4">{{ club.created_at.strftime('%B %Y') }}</p>
+                </div>
+            </div>
+
+            <!-- Member Stats -->
+            <div class="form-container">
+                <h5 class="mb-3">
+                    <i class="fas fa-chart-bar me-2"></i>Membership Stats
+                </h5>
+                
+                <div class="row text-center">
+                    <div class="col-6 mb-3">
+                        <div class="stat-item">
+                            <span class="stat-number" style="font-size: 2rem; color: var(--success-color);">{{ club.get_approved_member_count() }}</span>
+                            <div class="stat-label">Active</div>
+                        </div>
+                    </div>
+                    <div class="col-6 mb-3">
+                        <div class="stat-item">
+                            <span class="stat-number" style="font-size: 2rem; color: var(--warning-color);">{{ club.get_pending_member_count() }}</span>
+                            <div class="stat-label">Pending</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="progress mb-3" style="height: 10px;">
+                    {% set total = club.get_member_count() %}
+                    {% set approved = club.get_approved_member_count() %}
+                    {% if total > 0 %}
+                        <div class="progress-bar bg-success" style="width: {{ (approved / total * 100)|round }}%"></div>
+                    {% endif %}
+                </div>
+                <small class="text-muted">{{ ((approved / total * 100)|round) if total > 0 else 0 }}% approval rate</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Similar Clubs Section -->
+<div class="section" style="background: rgba(15, 23, 42, 0.5);">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center mb-5">
+                <h2 class="section-title">Explore Other Clubs</h2>
+                <p class="lead text-muted">Discover more opportunities to get involved</p>
+            </div>
+        </div>
+        
+        <div class="row g-4">
+            <!-- You can add similar clubs here -->
+            <div class="col-12 text-center">
+                <a href="{{ url_for('club_list') }}" class="btn btn-primary btn-lg">
+                    <i class="fas fa-users me-2"></i>View All Clubs
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

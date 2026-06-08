@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <h1>Available Clubs</h1>
+    
+    <div class="row">
+        {% for club in clubs %}
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">{{ club.name }}</h5>
+                    <p class="card-text">{{ club.description }}</p>
+                    <a href="{{ url_for('join_club', club_id=club.id) }}" class="btn btn-primary">Join</a>
+                    <a href="{{ url_for('club_details', club_id=club.id) }}" class="btn btn-outline-primary">Details</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

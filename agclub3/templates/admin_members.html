@@ -1,0 +1,334 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard - Club Portal{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Page Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="display-5 mb-2">
+                <i class="fas fa-cog me-3"></i>Member Management
+            </h1>
+            <p class="lead text-muted">Review and manage club membership applications.</p>
+        </div>
+    </div>
+
+    <!-- Filters and Search -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <form method="GET" class="row g-3">
+                        <!-- Club Filter -->
+                        <div class="col-md-3">
+                            <label class="form-label">Filter by Club</label>
+                            <select name="club" class="form-select">
+                                <option value="">All Clubs</option>
+                                {% for club in clubs %}
+                                    <option value="{{ club.id }}" 
+                                            {% if club_filter == club.id|string %}selected{% endif %}>
+                                        {{ club.name }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <!-- Status Filter -->
+                        <div class="col-md-3">
+                            <label class="form-label">Filter by Status</label>
+                            <select name="status" class="form-select">
+                                <option value="">All Status</option>
+                                <option value="Pending" {% if status_filter == 'Pending' %}selected{% endif %}>Pending</option>
+                                <option value="Approved" {% if status_filter == 'Approved' %}selected{% endif %}>Approved</option>
+                                <option value="Rejected" {% if status_filter == 'Rejected' %}selected{% endif %}>Rejected</option>
+                            </select>
+                        </div>
+
+                        <!-- Search -->
+                        <div class="col-md-4">
+                            <label class="form-label">Search Members</label>
+                            <input type="text" name="search" class="form-control" 
+                                   value="{{ search_query }}" 
+                                   placeholder="Search by name or email...">
+                        </div>
+
+                        <!-- Buttons -->
+                        <div class="col-md-2">
+                            <label class="form-label d-block">&nbsp;</label>
+                            <button type="submit" class="btn btn-primary me-2">
+                                <i class="fas fa-search"></i>
+                            </button>
+                            <a href="{{ url_for('admin_members') }}" class="btn btn-secondary">
+                                <i class="fas fa-times"></i>
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="row mb-3">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <h5>
+                    <i class="fas fa-users me-2"></i>
+                    Members 
+                    <span class="badge bg-secondary">{{ members.total }}</span>
+                </h5>
+                <div>
+                    <a href="{{ url_for('admin_send_email') }}" class="btn btn-primary me-2">
+                        <i class="fas fa-envelope me-2"></i>Send Email
+                    </a>
+                    <a href="{{ url_for('export_members', club=club_filter, status=status_filter) }}" 
+                       class="btn btn-success">
+                        <i class="fas fa-download me-2"></i>Export CSV
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Members Table -->
+    {% if members.items %}
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Club</th>
+                                        <th>Status</th>
+                                        <th>Joined</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for member in members.items %}
+                                        <tr>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <div>
+                                                        <div class="fw-bold">{{ member.student_name }}</div>
+                                                        {% if member.student_id %}
+                                                            <small class="text-muted">ID: {{ member.student_id }}</small>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div>{{ member.email }}</div>
+                                                {% if member.phone %}
+                                                    <small class="text-muted">{{ member.phone }}</small>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-info">{{ member.club.name }}</span>
+                                            </td>
+                                            <td>
+                                                {% if member.status == 'Pending' %}
+                                                    <span class="badge bg-warning">{{ member.status }}</span>
+                                                {% elif member.status == 'Approved' %}
+                                                    <span class="badge bg-success">{{ member.status }}</span>
+                                                {% else %}
+                                                    <span class="badge bg-danger">{{ member.status }}</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                <div>{{ member.joined_on.strftime('%b %d, %Y') }}</div>
+                                                <small class="text-muted">{{ member.joined_on.strftime('%I:%M %p') }}</small>
+                                            </td>
+                                            <td>
+                                                <div class="btn-group" role="group">
+                                                    <!-- Approve Button -->
+                                                    {% if member.status != 'Approved' %}
+                                                        <form method="POST" action="{{ url_for('update_member_status') }}" class="d-inline">
+                                                            <input type="hidden" name="member_id" value="{{ member.id }}">
+                                                            <input type="hidden" name="status" value="Approved">
+                                                            <button type="submit" class="btn btn-sm btn-success" 
+                                                                    onclick="return confirm('Approve this member?')">
+                                                                <i class="fas fa-check"></i>
+                                                            </button>
+                                                        </form>
+                                                    {% endif %}
+                                                    
+                                                    <!-- Reject Button -->
+                                                    {% if member.status != 'Rejected' %}
+                                                        <form method="POST" action="{{ url_for('update_member_status') }}" class="d-inline">
+                                                            <input type="hidden" name="member_id" value="{{ member.id }}">
+                                                            <input type="hidden" name="status" value="Rejected">
+                                                            <button type="submit" class="btn btn-sm btn-danger" 
+                                                                    onclick="return confirm('Reject this member?')">
+                                                                <i class="fas fa-times"></i>
+                                                            </button>
+                                                        </form>
+                                                    {% endif %}
+                                                    
+                                                    <!-- View Details Button -->
+                                                    <button type="button" class="btn btn-sm btn-outline-secondary" 
+                                                            data-bs-toggle="modal" 
+                                                            data-bs-target="#memberModal{{ member.id }}">
+                                                        <i class="fas fa-eye"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pagination -->
+        {% if members.pages > 1 %}
+            <div class="row mt-4">
+                <div class="col-12">
+                    <nav aria-label="Members pagination">
+                        <ul class="pagination justify-content-center">
+                            {% if members.has_prev %}
+                                <li class="page-item">
+                                    <a class="page-link" href="{{ url_for('admin_members', page=members.prev_num, club=club_filter, status=status_filter, search=search_query) }}">
+                                        <i class="fas fa-chevron-left"></i>
+                                    </a>
+                                </li>
+                            {% endif %}
+                            
+                            {% for page_num in members.iter_pages() %}
+                                {% if page_num %}
+                                    {% if page_num != members.page %}
+                                        <li class="page-item">
+                                            <a class="page-link" href="{{ url_for('admin_members', page=page_num, club=club_filter, status=status_filter, search=search_query) }}">
+                                                {{ page_num }}
+                                            </a>
+                                        </li>
+                                    {% else %}
+                                        <li class="page-item active">
+                                            <span class="page-link">{{ page_num }}</span>
+                                        </li>
+                                    {% endif %}
+                                {% else %}
+                                    <li class="page-item disabled">
+                                        <span class="page-link">...</span>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+                            
+                            {% if members.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="{{ url_for('admin_members', page=members.next_num, club=club_filter, status=status_filter, search=search_query) }}">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        {% endif %}
+
+        <!-- Member Detail Modals -->
+        {% for member in members.items %}
+            <div class="modal fade" id="memberModal{{ member.id }}" tabindex="-1">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Member Details</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-6">
+                                    <h6 class="text-muted">Name</h6>
+                                    <p>{{ member.student_name }}</p>
+                                </div>
+                                <div class="col-6">
+                                    <h6 class="text-muted">Email</h6>
+                                    <p>{{ member.email }}</p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-6">
+                                    <h6 class="text-muted">Club</h6>
+                                    <p>{{ member.club.name }}</p>
+                                </div>
+                                <div class="col-6">
+                                    <h6 class="text-muted">Status</h6>
+                                    <p>
+                                        {% if member.status == 'Pending' %}
+                                            <span class="badge bg-warning">{{ member.status }}</span>
+                                        {% elif member.status == 'Approved' %}
+                                            <span class="badge bg-success">{{ member.status }}</span>
+                                        {% else %}
+                                            <span class="badge bg-danger">{{ member.status }}</span>
+                                        {% endif %}
+                                    </p>
+                                </div>
+                            </div>
+                            {% if member.phone %}
+                                <div class="row">
+                                    <div class="col-6">
+                                        <h6 class="text-muted">Phone</h6>
+                                        <p>{{ member.phone }}</p>
+                                    </div>
+                                    {% if member.student_id %}
+                                        <div class="col-6">
+                                            <h6 class="text-muted">Student ID</h6>
+                                            <p>{{ member.student_id }}</p>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            {% endif %}
+                            <div class="row">
+                                <div class="col-12">
+                                    <h6 class="text-muted">Joined On</h6>
+                                    <p>{{ member.joined_on.strftime('%B %d, %Y at %I:%M %p') }}</p>
+                                </div>
+                            </div>
+                            {% if member.reason %}
+                                <div class="row">
+                                    <div class="col-12">
+                                        <h6 class="text-muted">Reason for Joining</h6>
+                                        <div class="bg-light p-3 rounded">
+                                            <p class="mb-0">{{ member.reason }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+
+    {% else %}
+        <!-- No Members Found -->
+        <div class="row">
+            <div class="col-12">
+                <div class="text-center py-5">
+                    <i class="fas fa-users-slash fa-3x text-muted mb-3"></i>
+                    <h3>No Members Found</h3>
+                    <p class="text-muted">
+                        {% if search_query or club_filter or status_filter %}
+                            No members match your current filters. Try adjusting your search criteria.
+                        {% else %}
+                            No member applications have been submitted yet.
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

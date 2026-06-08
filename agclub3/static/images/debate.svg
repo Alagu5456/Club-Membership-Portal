@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <linearGradient id="debateGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffecd2;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#fcb69f;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <circle cx="50" cy="50" r="45" fill="url(#debateGrad)" stroke="#ffffff" stroke-width="2"/>
+  <circle cx="40" cy="45" r="15" fill="#ffffff" opacity="0.8"/>
+  <circle cx="60" cy="45" r="15" fill="#ffffff" opacity="0.8"/>
+  <circle cx="40" cy="45" r="8" fill="#fcb69f"/>
+  <circle cx="60" cy="45" r="8" fill="#fcb69f"/>
+  <path d="M30 35 Q35 25 40 35" fill="#ffffff"/>
+  <path d="M70 35 Q65 25 60 35" fill="#ffffff"/>
+  <ellipse cx="40" cy="60" rx="8" ry="4" fill="#fcb69f"/>
+  <ellipse cx="60" cy="60" rx="8" ry="4" fill="#fcb69f"/>
+</svg>

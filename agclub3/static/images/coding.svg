@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <linearGradient id="codeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <circle cx="50" cy="50" r="45" fill="url(#codeGrad)" stroke="#ffffff" stroke-width="2"/>
+  <rect x="25" y="30" width="50" height="40" rx="4" fill="#ffffff" opacity="0.9"/>
+  <rect x="25" y="30" width="50" height="8" rx="4" fill="#667eea"/>
+  <circle cx="30" cy="34" r="1.5" fill="#ffffff"/>
+  <circle cx="35" cy="34" r="1.5" fill="#ffffff"/>
+  <circle cx="40" cy="34" r="1.5" fill="#ffffff"/>
+  <path d="M35 45 L40 50 L35 55" stroke="#667eea" stroke-width="2" fill="none"/>
+  <path d="M45 55 L55 55" stroke="#667eea" stroke-width="2"/>
+  <path d="M60 45 L65 50 L60 55" stroke="#764ba2" stroke-width="2" fill="none"/>
+</svg>

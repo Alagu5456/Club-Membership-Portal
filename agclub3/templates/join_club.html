@@ -1,0 +1,176 @@
+{% extends "base.html" %}
+
+{% block title %}Join {{ club.name }} - Club Portal{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Page Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item">
+                        <a href="{{ url_for('club_list') }}">Clubs</a>
+                    </li>
+                    <li class="breadcrumb-item active">{{ club.name }}</li>
+                </ol>
+            </nav>
+            
+            <h1 class="display-5 mb-2">
+                <i class="fas fa-user-plus me-3"></i>Join {{ club.name }}
+            </h1>
+            <p class="lead text-muted">{{ club.description }}</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Registration Form -->
+        <div class="col-lg-8 mx-auto">
+            <div class="card shadow">
+                <div class="card-header">
+                    <h4 class="mb-0">
+                        <i class="fas fa-edit me-2"></i>Membership Application
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <form method="POST" novalidate>
+                        {{ form.hidden_tag() }}
+                        {{ form.club_id(value=club.id) }}
+                        
+                        <div class="row">
+                            <!-- Full Name -->
+                            <div class="col-md-6 mb-3">
+                                {{ form.student_name.label(class="form-label") }}
+                                {{ form.student_name(class="form-control" + (" is-invalid" if form.student_name.errors else "")) }}
+                                {% if form.student_name.errors %}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.student_name.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Email -->
+                            <div class="col-md-6 mb-3">
+                                {{ form.email.label(class="form-label") }}
+                                {{ form.email(class="form-control" + (" is-invalid" if form.email.errors else ""), type="email") }}
+                                {% if form.email.errors %}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.email.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <!-- Phone -->
+                            <div class="col-md-6 mb-3">
+                                {{ form.phone.label(class="form-label") }}
+                                {{ form.phone(class="form-control" + (" is-invalid" if form.phone.errors else ""), placeholder="Optional") }}
+                                {% if form.phone.errors %}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.phone.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Student ID -->
+                            <div class="col-md-6 mb-3">
+                                {{ form.student_id.label(class="form-label") }}
+                                {{ form.student_id(class="form-control" + (" is-invalid" if form.student_id.errors else ""), placeholder="Optional") }}
+                                {% if form.student_id.errors %}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.student_id.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Reason -->
+                        <div class="mb-3">
+                            {{ form.reason.label(class="form-label") }}
+                            {{ form.reason(class="form-control" + (" is-invalid" if form.reason.errors else ""), rows="4", placeholder="Tell us why you want to join this club...") }}
+                            {% if form.reason.errors %}
+                                <div class="invalid-feedback">
+                                    {% for error in form.reason.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                            <div class="form-text">Optional: This helps us understand your interest in the club.</div>
+                        </div>
+
+                        <!-- Submit Buttons -->
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="{{ url_for('club_list') }}" class="btn btn-secondary me-md-2">
+                                <i class="fas fa-arrow-left me-2"></i>Back to Clubs
+                            </a>
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-paper-plane me-2"></i>Submit Application
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Club Information -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="card bg-secondary">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="fas fa-info-circle me-2"></i>What Happens Next?
+                    </h5>
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <div class="d-flex align-items-center">
+                                <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center me-3" 
+                                     style="width: 40px; height: 40px;">
+                                    <span class="text-white fw-bold">1</span>
+                                </div>
+                                <div>
+                                    <h6 class="mb-0">Application Submitted</h6>
+                                    <small class="text-muted">Your application is now pending review</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="d-flex align-items-center">
+                                <div class="bg-warning rounded-circle d-flex align-items-center justify-content-center me-3" 
+                                     style="width: 40px; height: 40px;">
+                                    <span class="text-white fw-bold">2</span>
+                                </div>
+                                <div>
+                                    <h6 class="mb-0">Admin Review</h6>
+                                    <small class="text-muted">Club admins will review your application</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="d-flex align-items-center">
+                                <div class="bg-success rounded-circle d-flex align-items-center justify-content-center me-3" 
+                                     style="width: 40px; height: 40px;">
+                                    <span class="text-white fw-bold">3</span>
+                                </div>
+                                <div>
+                                    <h6 class="mb-0">Decision Notification</h6>
+                                    <small class="text-muted">You'll be notified of the decision</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

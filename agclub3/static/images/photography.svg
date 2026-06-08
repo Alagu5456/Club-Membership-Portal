@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <linearGradient id="photoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4facfe;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#00f2fe;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <circle cx="50" cy="50" r="45" fill="url(#photoGrad)" stroke="#ffffff" stroke-width="2"/>
+  <rect x="25" y="35" width="50" height="35" rx="4" fill="#ffffff" opacity="0.9"/>
+  <rect x="35" y="25" width="30" height="8" rx="2" fill="#ffffff" opacity="0.9"/>
+  <circle cx="50" cy="52" r="12" fill="#4facfe"/>
+  <circle cx="50" cy="52" r="8" fill="#ffffff"/>
+  <circle cx="50" cy="52" r="5" fill="#4facfe"/>
+  <circle cx="60" cy="42" r="2" fill="#00f2fe"/>
+  <rect x="42" y="30" width="16" height="2" fill="#4facfe"/>
+</svg>

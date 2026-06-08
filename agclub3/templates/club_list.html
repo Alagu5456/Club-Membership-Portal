@@ -1,0 +1,162 @@
+{% extends "base.html" %}
+
+{% block title %}Available Clubs - Club Membership Portal{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="hero-section">
+    <div class="container">
+        <div class="hero-content">
+            <h1 class="hero-title">Discover Your Community</h1>
+            <p class="hero-subtitle">Join amazing clubs, build lasting friendships, and develop your skills with fellow students</p>
+            
+            <div class="hero-stats">
+                <div class="stat-item">
+                    <span class="stat-number counter" data-count="{{ clubs|length }}">{{ clubs|length }}</span>
+                    <div class="stat-label">Active Clubs</div>
+                </div>
+                <div class="stat-item">
+                    {% set total_members = 0 %}
+                    {% for club in clubs %}
+                        {% set total_members = total_members + club.get_member_count() %}
+                    {% endfor %}
+                    <span class="stat-number counter" data-count="{{ total_members or 250 }}">{{ total_members or 250 }}</span>
+                    <div class="stat-label">Happy Members</div>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number counter" data-count="50">50</span>
+                    <div class="stat-label">Events Monthly</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Clubs Section -->
+<div class="section">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center mb-5">
+                <h2 class="section-title">Choose Your Adventure</h2>
+                <p class="lead text-center text-muted">Find the perfect club that matches your interests and goals</p>
+            </div>
+        </div>
+        
+        <div class="row g-4" id="clubs">
+            {% for club in clubs %}
+            <div class="col-lg-4 col-md-6">
+                <div class="club-card fade-in" onclick="window.location.href='{{ url_for('club_details', club_id=club.id) }}'">
+                    <div class="club-icon animate-float">
+                        {% if club.image_url %}
+                            <img src="{{ club.image_url }}" alt="{{ club.name }}" style="width: 60px; height: 60px;">
+                        {% else %}
+                            {% if 'NSS' in club.name or 'Service' in club.name %}
+                                <i class="fas fa-hands-helping"></i>
+                            {% elif 'Coding' in club.name or 'Tech' in club.name %}
+                                <i class="fas fa-code"></i>
+                            {% elif 'Literary' in club.name or 'Writing' in club.name %}
+                                <i class="fas fa-feather-alt"></i>
+                            {% elif 'Photography' in club.name %}
+                                <i class="fas fa-camera"></i>
+                            {% elif 'Debate' in club.name %}
+                                <i class="fas fa-comments"></i>
+                            {% elif 'Music' in club.name %}
+                                <i class="fas fa-music"></i>
+                            {% else %}
+                                <i class="fas fa-users"></i>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                    
+                    <div class="card-body">
+                        <h5 class="card-title">{{ club.name }}</h5>
+                        <p class="card-text">{{ club.description }}</p>
+                        
+                        <div class="member-count">
+                            <i class="fas fa-users me-1"></i>
+                            {{ club.get_approved_member_count() }} Active Members
+                        </div>
+                        
+                        {% if club.get_pending_member_count() > 0 %}
+                        <div class="mb-3">
+                            <span class="badge bg-warning">
+                                <i class="fas fa-clock me-1"></i>
+                                {{ club.get_pending_member_count() }} Pending Applications
+                            </span>
+                        </div>
+                        {% endif %}
+                        
+                        <div class="d-grid gap-2">
+                            <a href="{{ url_for('club_details', club_id=club.id) }}" class="btn btn-outline-primary">
+                                <i class="fas fa-info-circle me-2"></i>Learn More
+                            </a>
+                            <a href="{{ url_for('join_club', club_id=club.id) }}" class="btn btn-primary">
+                                <i class="fas fa-user-plus me-2"></i>Join Now
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- Features Section -->
+<div class="section" style="background: rgba(15, 23, 42, 0.5);">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center mb-5">
+                <h2 class="section-title">Why Join Our Clubs?</h2>
+            </div>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-lg-4 col-md-6">
+                <div class="text-center fade-in">
+                    <div class="club-icon" style="background: var(--gradient-accent); margin: 0 auto 2rem;">
+                        <i class="fas fa-network-wired"></i>
+                    </div>
+                    <h4>Build Networks</h4>
+                    <p class="text-muted">Connect with like-minded students and build lasting professional relationships</p>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6">
+                <div class="text-center fade-in">
+                    <div class="club-icon" style="background: var(--gradient-secondary); margin: 0 auto 2rem;">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <h4>Develop Skills</h4>
+                    <p class="text-muted">Learn new skills, enhance your talents, and gain valuable experience</p>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6">
+                <div class="text-center fade-in">
+                    <div class="club-icon" style="background: var(--gradient-primary); margin: 0 auto 2rem;">
+                        <i class="fas fa-trophy"></i>
+                    </div>
+                    <h4>Achieve Excellence</h4>
+                    <p class="text-muted">Participate in competitions, events, and achieve recognition</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Call to Action -->
+<div class="section" style="background: var(--gradient-primary); color: white;">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto text-center">
+                <h3 class="display-6 fw-bold mb-3">Ready to Make a Difference?</h3>
+                <p class="lead mb-4">Join thousands of students who have found their passion and built lasting connections through our clubs.</p>
+                <a href="#clubs" class="btn btn-outline-light btn-lg">
+                    <i class="fas fa-arrow-up me-2"></i>Browse Clubs Above
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
